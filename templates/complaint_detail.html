@@ -1,0 +1,91 @@
+{% extends "layout.html" %}
+{% block title %}Complaint #{{ complaint.id }} — CVR Resolve{% endblock %}
+{% block page_title %}Complaint #{{ complaint.id }}{% endblock %}
+{% block sidebar_links %}
+  <a href="{{ url_for('student_dashboard') }}"><span class="icon">⬡</span> Dashboard</a>
+  <a href="{{ url_for('new_complaint') }}"><span class="icon">＋</span> New Complaint</a>
+{% endblock %}
+{% block content %}
+<div style="max-width:720px;margin:0 auto;">
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px;">
+          <span style="font-size:13px;color:var(--text3);">Complaint #{{ complaint.id }}</span>
+          <span class="badge badge-{{ complaint.status|lower }}">{{ complaint.status }}</span>
+          <span class="badge badge-{{ complaint.priority|lower }}">
+            <span class="priority-dot {{ complaint.priority }}"></span>{{ complaint.priority }}
+          </span>
+        </div>
+        <h1 style="font-size:22px;font-weight:700;margin-bottom:8px;">{{ complaint.title }}</h1>
+        <div style="display:flex;flex-wrap:wrap;gap:16px;font-size:12px;color:var(--text3);">
+          <span>📍 {{ complaint.location }}</span>
+          <span>🕐 {{ complaint.created_at }}</span>
+          <span>🔄 Updated: {{ complaint.updated_at }}</span>
+        </div>
+      </div>
+      {% if complaint.duplicate_of %}
+      <div style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.25);border-radius:8px;padding:10px;text-align:right;">
+        <div style="font-size:11px;color:var(--text3);text-transform:uppercase;">Duplicate</div>
+        <a href="#" style="font-weight:600;color:var(--orange);">Similar to #{{ complaint.duplicate_of }}</a>
+      </div>
+      {% endif %}
+    </div>
+    <div class="card-body">
+      <!-- Description -->
+      <div style="margin-bottom:24px;">
+        <h3 style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;">Description</h3>
+        <p style="line-height:1.7;color:var(--text);white-space:pre-wrap;">{{ complaint.description }}</p>
+      </div>
+
+      <!-- Image -->
+      {% if complaint.image_path %}
+      <div style="margin-bottom:24px;">
+        <h3 style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;">Attachment</h3>
+        <img src="{{ url_for('static', filename='uploads/' + complaint.image_path) }}" style="max-width:100%;border-radius:12px;border:1px solid var(--border);margin-top:8px;" />
+      </div>
+      {% endif %}
+
+      <!-- Remarks -->
+      {% if complaint.remarks %}
+      <div style="background:rgba(34,197,94,0.08);border-left:4px solid var(--green);padding:14px 16px;border-radius:8px;margin-bottom:24px;">
+        <div style="font-size:12px;font-weight:600;color:var(--green);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px;">💬 Admin Remarks</div>
+        <p style="color:var(--green);line-height:1.6;">{{ complaint.remarks }}</p>
+      </div>
+      {% endif %}
+
+      <!-- Status Timeline -->
+      <div style="margin-bottom:20px;">
+        <h3 style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">Timeline</h3>
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div style="display:flex;gap:12px;">
+            <div style="position:relative;width:40px;height:40px;flex-shrink:0;">
+              <div style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:12px;height:12px;background:var(--accent);border-radius:50%;border:3px solid var(--bg);"></div>
+              <div style="position:absolute;top:12px;left:50%;transform:translateX(-50%);width:2px;height:16px;background:var(--border);"></div>
+            </div>
+            <div>
+              <div style="font-size:12px;font-weight:600;color:var(--text);">Complaint Submitted</div>
+              <div style="font-size:12px;color:var(--text3);">{{ complaint.created_at }}</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:12px;">
+            <div style="position:relative;width:40px;height:40px;flex-shrink:0;">
+              <div style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:12px;height:12px;background:{% if complaint.status == 'Completed' %}var(--green){% else %}var(--border){% endif %};border-radius:50%;border:3px solid var(--bg);"></div>
+            </div>
+            <div>
+              <div style="font-size:12px;font-weight:600;color:var(--text);">{% if complaint.status == 'Completed' %}Resolved{% else %}Under Review{% endif %}</div>
+              <div style="font-size:12px;color:var(--text3);">{% if complaint.status == 'Completed' %}{{ complaint.updated_at }}{% else %}Awaiting admin action...{% endif %}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Back Button -->
+  <div style="text-align:center;margin-top:20px;">
+    <a href="{{ url_for('student_dashboard') }}" class="btn btn-ghost">← Back to Dashboard</a>
+  </div>
+</div>
+{% endblock %}
+

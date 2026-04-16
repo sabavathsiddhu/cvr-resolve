@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Login — CVR Resolve{% endblock %}
+{% block body %}
+<div class="login-page">
+  <div class="login-bg"></div>
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="logo-big">CVR <span>Resolve</span></div>
+      <p>Campus Complaint Management System</p>
+    </div>
+    <h2>Sign In</h2>
+    <form method="POST">
+      <div class="form-group">
+        <label>Email or Username</label>
+        <input type="text" name="username" placeholder="Enter your email or username" required autofocus />
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" name="password" placeholder="Enter your password" required />
+      </div>
+      <button type="submit" class="btn btn-primary login-btn">Sign In →</button>
+    </form>
+    
+    <div class="login-divider">or</div>
+    <a href="{{ url_for('register') }}" class="btn btn-ghost login-btn" style="justify-content:center;">
+      Create Student Account
+    </a>
+    <div class="demo-creds">
+      <h4>Quick Login Selection</h4>
+      <div class="form-group" style="margin-bottom: 0;">
+        <select id="quickLoginSelect" onchange="autoFillLogin()" style="width: 100%; padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--bg); color: var(--text);">
+          <option value="">-- Select an account to auto-fill --</option>
+          <option value="superadmin@cvr.ac.in|admin@123">Super Admin</option>
+          <option value="cm@cvr.ac.in|admin@123">CM Block Admin</option>
+          <option value="canteen@cvr.ac.in|admin@123">Canteen Block Admin</option>
+          <option value="fy@cvr.ac.in|admin@123">First Year Block Admin</option>
+          <option value="hostel@cvr.ac.in|admin@123">Hostel Block Admin</option>
+          <option value="lab@cvr.ac.in|admin@123">Labs Block Admin</option>
+          <option value="library@cvr.ac.in|admin@123">Library Block Admin</option>
+          <option value="main@cvr.ac.in|admin@123">Main Block Admin</option>
+          <option value="sports@cvr.ac.in|admin@123">Sports Block Admin</option>
+          <option value="rahul@student.cvr.ac.in|stud123">Student Account</option>
+        </select>
+      </div>
+      <script>
+        function autoFillLogin() {
+          const select = document.getElementById('quickLoginSelect');
+          const val = select.value;
+          const unameInput = document.querySelector('input[name="username"]');
+          const pwdInput = document.querySelector('input[name="password"]');
+          if (val) {
+            const parts = val.split('|');
+            unameInput.value = parts[0];
+            pwdInput.value = parts[1];
+          } else {
+            unameInput.value = '';
+            pwdInput.value = '';
+          }
+        }
+      </script>
+    </div>
+  </div>
+</div>
+{% endblock %}

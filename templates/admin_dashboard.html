@@ -1,0 +1,147 @@
+{% extends "layout.html" %}
+{% block title %}Admin Dashboard — CVR Resolve{% endblock %}
+{% block page_title %}Block Admin Dashboard{% endblock %}
+{% block sidebar_links %}
+  <a href="{{ url_for('admin_dashboard') }}" class="active"><span class="icon">⬡</span> Dashboard</a>
+  <div class="sidebar-section-label">Assigned Blocks</div>
+  {% for block in assigned_blocks %}
+    <a href="{{ url_for('admin_dashboard') }}?block={{ block|urlencode }}">
+      <span class="icon">🏢</span> {{ block }}
+    </a>
+  {% endfor %}
+{% endblock %}
+{% block content %}
+<!-- Assigned Blocks -->
+<div style="margin-bottom:20px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+  <span style="font-size:13px;color:var(--text3);margin-right:4px;">Your blocks:</span>
+  {% for block in assigned_blocks %}
+    <span class="block-pill">🏢 {{ block }}</span>
+  {% endfor %}
+</div>
+
+<!-- Stats -->
+<div class="stats-grid">
+  <div class="stat-card blue">
+    <div class="stat-number">{{ stats.total }}</div>
+    <div class="stat-label">Total Complaints</div>
+    <div class="stat-icon">📋</div>
+  </div>
+  <div class="stat-card orange">
+    <div class="stat-number">{{ stats.pending }}</div>
+    <div class="stat-label">Pending</div>
+    <div class="stat-icon">⏳</div>
+  </div>
+  <div class="stat-card green">
+    <div class="stat-number">{{ stats.completed }}</div>
+    <div class="stat-label">Resolved</div>
+    <div class="stat-icon">✓</div>
+  </div>
+</div>
+
+<!-- Filters -->
+<form method="GET" class="filters-bar">
+  <input type="text" name="search" class="search-input" placeholder="🔍 Search complaints..." value="{{ search }}" />
+  <select name="block" onchange="this.form.submit()">
+    <option value="">All Blocks</option>
+    {% for block in assigned_blocks %}
+      <option value="{{ block }}" {% if block_filter == block %}selected{% endif %}>{{ block }}</option>
+    {% endfor %}
+  </select>
+  <select name="status" onchange="this.form.submit()">
+    <option value="">All Status</option>
+    <option value="Pending" {% if status_filter == 'Pending' %}selected{% endif %}>Pending</option>
+    <option value="Completed" {% if status_filter == 'Completed' %}selected{% endif %}>Completed</option>
+  </select>
+  <button type="submit" class="btn btn-ghost btn-sm">Filter</button>
+  <a href="{{ url_for('admin_dashboard') }}" class="btn btn-ghost btn-sm">Reset</a>
+</form>
+
+<!-- Complaints Table -->
+<div class="card">
+  <div class="card-header">
+    <span class="card-title">Complaints ({{ complaints|length }})</span>
+  </div>
+  {% if complaints %}
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Title</th>
+          <th>Student</th>
+          <th>Block</th>
+          <th>Priority</th>
+          <th>Status</th>
+          <th>Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for c in complaints %}
+        <tr>
+          <td style="color:var(--text3);font-size:12px;">{{ c.id }}</td>
+          <td>
+            <div class="td-main">{{ c.title }}</div>
+            <div style="font-size:12px;color:var(--text3);">{{ c.description[:50] }}…</div>
+            {% if c.duplicate_of %}<span class="dup-badge">Similar #{{ c.duplicate_of }}</span>{% endif %}
+          </td>
+          <td>{{ c.student_name }}</td>
+          <td><span class="block-pill">{{ c.location }}</span></td>
+          <td>
+            <span class="badge badge-{{ c.priority|lower }}">
+              <span class="priority-dot {{ c.priority }}"></span>{{ c.priority }}
+            </span>
+          </td>
+          <td><span class="badge badge-{{ c.status|lower }}">{{ c.status }}</span></td>
+          <td style="font-size:12px;color:var(--text3);">{{ c.created_at[:10] }}</td>
+          <td>
+            <button class="btn btn-sm btn-ghost update-btn"
+              data-id="{{ c.id }}"
+              data-status="{{ c.status }}"
+              data-remarks="{{ c.remarks or '' }}"
+              data-action="{{ url_for('update_complaint', cid=c.id) }}">
+              ✎ Update
+            </button>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+    <div class="empty-state">
+      <div class="empty-icon">✅</div>
+      <div class="empty-text">No complaints found.</div>
+    </div>
+  {% endif %}
+</div>
+
+<!-- Update Modal -->
+<div class="modal-overlay" id="update-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">Update Complaint</span>
+      <button data-close-modal style="background:none;border:none;color:var(--text2);cursor:pointer;font-size:20px;">✕</button>
+    </div>
+    <form method="POST">
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Status</label>
+          <select name="status">
+            <option value="Pending">⏳ Pending</option>
+            <option value="Completed">✓ Completed</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Remarks / Comments (optional)</label>
+          <textarea name="remarks" placeholder="Add a note for the student..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" data-close-modal class="btn btn-ghost">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

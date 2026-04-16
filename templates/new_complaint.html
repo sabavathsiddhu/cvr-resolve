@@ -1,0 +1,55 @@
+{% extends "layout.html" %}
+{% block title %}Raise Complaint — CVR Resolve{% endblock %}
+{% block page_title %}Raise a Complaint{% endblock %}
+{% block sidebar_links %}
+  <a href="{{ url_for('student_dashboard') }}"><span class="icon">⬡</span> Dashboard</a>
+  <a href="{{ url_for('new_complaint') }}" class="active"><span class="icon">＋</span> New Complaint</a>
+{% endblock %}
+{% block content %}
+<div style="max-width:640px;margin:0 auto;">
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">Submit a New Complaint</span>
+      <span style="font-size:12px;color:var(--text3);">Fields marked * are required</span>
+    </div>
+    <div class="card-body">
+      <form method="POST" enctype="multipart/form-data">
+        <div class="form-group">
+          <label>Complaint Title *</label>
+          <input type="text" name="title" placeholder="Brief title of the issue" required />
+        </div>
+        <div class="form-group">
+          <label>Location / Block *</label>
+          <select name="location" required>
+            <option value="" disabled selected>Select Block</option>
+            {% for block in blocks %}
+              <option value="{{ block }}">{{ block }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Description *</label>
+          <textarea name="description" placeholder="Describe the problem in detail (e.g. broken AC in room 204, leaking pipe near main entrance...)" required></textarea>
+          <div style="font-size:11px;color:var(--text3);margin-top:5px;">Tip: Keywords like "broken", "urgent", or "emergency" auto-assign High priority.</div>
+        </div>
+        <div class="form-group">
+          <label>Upload Image (optional)</label>
+          <div class="upload-zone" id="upload-zone">
+            <input type="file" id="image" name="image" accept="image/*" />
+            <div class="upload-icon">📷</div>
+            <div class="upload-text">
+              <span>Click to upload</span> or drag & drop<br>
+              <small style="color:var(--text3);">PNG, JPG, GIF — max 5MB</small>
+            </div>
+          </div>
+          <img id="img-preview" class="img-preview" alt="Preview" />
+        </div>
+        <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:8px;">
+          <a href="{{ url_for('student_dashboard') }}" class="btn btn-ghost">Cancel</a>
+          <button type="submit" class="btn btn-primary">Submit Complaint →</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

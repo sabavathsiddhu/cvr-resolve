@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Complete Registration — CVR Resolve{% endblock %}
+{% block body %}
+<div class="login-page">
+  <div class="login-bg"></div>
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="logo-big">CVR <span>Resolve</span></div>
+      <p>Complete Your Registration</p>
+    </div>
+    
+    <!-- Google Profile Info -->
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:20px;text-align:center;">
+      {% if oauth_user.picture %}
+        <img src="{{ oauth_user.picture }}" style="width:60px;height:60px;border-radius:50%;margin-bottom:10px;" />
+      {% endif %}
+      <div style="font-weight:600;color:var(--text);">{{ oauth_user.name }}</div>
+      <div style="font-size:12px;color:var(--text3);">{{ oauth_user.email }}</div>
+    </div>
+
+    <h2>Choose Your Username</h2>
+    <p style="font-size:13px;color:var(--text3);margin-bottom:16px;">This username will be used to log in to CVR Resolve</p>
+    
+    <form method="POST">
+      <div class="form-group">
+        <label>Username *</label>
+        <input type="text" name="username" placeholder="e.g. rahul_sharma" required autofocus />
+        <div style="font-size:11px;color:var(--text3);margin-top:5px;">✓ Can contain letters, numbers, underscores</div>
+      </div>
+      
+      <button type="submit" class="btn btn-primary login-btn">Create Account & Login →</button>
+    </form>
+
+    <div style="text-align:center;margin-top:16px;font-size:13px;color:var(--text3);">
+      Already have an account? <a href="{{ url_for('login') }}">Sign in</a>
+    </div>
+
+    <div style="margin-top:20px;padding:12px;background:rgba(79,142,247,0.08);border-radius:8px;font-size:12px;color:var(--accent);">
+      <strong>ℹ️ Note:</strong> Your email and name are verified through Google. You only need to choose a username.
+    </div>
+  </div>
+</div>
+{% endblock %}
